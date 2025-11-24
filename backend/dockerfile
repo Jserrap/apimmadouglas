@@ -1,0 +1,50 @@
+# Stage 1: install deps & build
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# instalar dependências nativas necessárias para prisma (se houver)
+RUN apk add --no-cache openssl libc6-compat
+
+# copy package files first (cache layer)
+COPY package.json package-lock.json* yarn.lock* ./
+
+# Install all dependencies (including dev) so we can build TypeScript & run prisma generate
+# Use npm ci if package-lock.json exists, otherwise npm install
+RUN if [ -f package-lock.json ]; then npm ci --ignore-scripts; else npm install --ignore-scripts; fi
+
+# copy source
+COPY . .
+
+# build TypeScript
+RUN npm run build
+
+# generate prisma client (assumes prisma schema at prisma/schema.prisma)
+# this will create node_modules/.prisma and client in node_modules
+RUN npx prisma generate
+
+# Stage 2: production image (smaller)
+FROM node:18-alpine AS production
+WORKDIR /app
+
+# minimal runtime deps for Prisma
+RUN apk add --no-cache openssl libc6-compat
+
+# copy package.json and production node_modules from builder
+COPY --from=builder /app/package.json ./package.json
+# copy node_modules (contains prisma client)
+COPY --from=builder /app/node_modules ./node_modules
+
+# copy built output
+COPY --from=builder /app/dist ./dist
+# copy prisma schema if you need runtime migrations or prisma studio (optional)
+COPY --from=builder /app/prisma ./prisma
+
+# default environment
+ENV NODE_ENV=production
+# Render (and many PaaS) provide PORT env var; keep default 3000 fallback
+ENV PORT=3000
+
+EXPOSE 3000
+
+# start the app
+CMD ["node", "dist/server.js"]
