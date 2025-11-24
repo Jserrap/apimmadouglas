@@ -1,10 +1,12 @@
 {
   "name": "apimmadouglas",
   "version": "1.0.0",
-  "description": "Api de MMA trabalho para cadeira de Douglas",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "tailwindcss -i ./src/index.css -o ./dist/output.css --minify",
+    "dev:css": "tailwindcss -i ./src/index.css -o ./dist/output.css --watch"
   },
   "repository": {
     "type": "git",
@@ -19,17 +21,24 @@
   },
   "homepage": "https://github.com/Jserrap/apimmadouglas#readme",
   "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/swagger-ui-express": "^4.1.8",
-    "prisma": "^6.16.3",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.3",
-    "express": "^5.1.0",
-    "openapi-types": "^12.1.3",
-    "swagger-ui-express": "^5.0.1",
-    "zod": "^4.1.12"
+    "@radix-ui/themes": "^3.2.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "embla-carousel-react": "^8.6.0",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^0.554.0",
+    "next-themes": "^0.4.6",
+    "react-day-picker": "^9.11.1",
+    "react-resizable-panels": "^3.0.6",
+    "recharts": "^3.4.1",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.4.0",
+    "vaul": "^1.1.2"
   }
 }

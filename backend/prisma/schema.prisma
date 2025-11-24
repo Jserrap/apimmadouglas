@@ -24,12 +24,12 @@ model Card {
 }
 
 model Luta {
-  id           Int      @id @default(autoincrement())
-  lutadorAId   Int
-  lutadorBId   Int
-  cardId       Int
-  resultado    String?
-  lutadorA     Lutador  @relation("LutadorA", fields: [lutadorAId], references: [id])
-  lutadorB     Lutador  @relation("LutadorB", fields: [lutadorBId], references: [id])
-  card         Card     @relation(fields: [cardId], references: [id])
+  id         Int      @id @default(autoincrement())
+  peso       String?
+  rounds     Int?
+  data       DateTime?
+  lutadorAId Int
+  lutadorBId Int
+  lutadorA   Lutador  @relation("A", fields: [lutadorAId], references: [id])
+  lutadorB   Lutador  @relation("B", fields: [lutadorBId], references: [id])
 }

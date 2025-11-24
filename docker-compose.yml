@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: mma-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mma_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_mma:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mma-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      # Prisma deve usar o host do service "postgres" (nome do serviço) quando estiver em compose
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5433/mma_db?schema=public"
+      # permite que seu backend aceite requisições do front hospedado localmente
+      CORS_ORIGIN: "http://localhost:5173"
+    volumes:
+      - ./backend:/usr/src/app       # mapeia o código para hot reload em dev
+      - /usr/src/app/node_modules   # evita conflito local/node_modules
+    command: ["npm", "run", "dev"]  # usa seu script dev (ts-node-dev) — ok para dev
+
+volumes:
+  pgdata_mma:

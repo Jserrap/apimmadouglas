@@ -1,5 +1,3 @@
 node_modules
-# Keep environment variables out of version control
+front_backup_
 .env
-
-/generated/prisma
